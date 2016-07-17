@@ -68,15 +68,13 @@ CUORE.Message = CUORE.Class(null, {
     _parse: function(json) {
         if (!json) return;
 
-        var parsed = json;
-        var isString = (typeof json === 'string');
-        if (isString) {
-            parsed = JSON.parse(json);
-        }
+        var jsonParser = new CUORE.Utils.JsonParser();
 
-        this.header = this._removeNulls(parsed.header);
-        this.query = this._removeNulls(parsed.query);
-        this.answer = this._removeNulls(parsed.answer);
+        var parseResult = jsonParser.parse(json);
+
+        this.header = parseResult.header;
+        this.query = parseResult.query;
+        this.answer = parseResult.answer;
     },
 
     _processMap: function(map, method) {
@@ -85,14 +83,5 @@ CUORE.Message = CUORE.Class(null, {
                 method.call(this, key, map[key]);
             }
         }
-    },
-
-    _removeNulls: function(filtered) {
-        for (var key in filtered) {
-            if (CUORE.Core.isOwnProperty(filtered, key) && !filtered[key]) {
-                delete filtered[key];
-            }
-        }
-        return filtered;
     }
 });
